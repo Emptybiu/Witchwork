@@ -2,9 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 echo "==> Checking out unchanged original gameplay source"
-if [ ! -d upstream/.git ]; then
-  git clone --depth 1 --branch v1.2.4 https://github.com/iam567/rich4-renew-app.git upstream
-fi
+rm -rf upstream
+git clone --depth 1 --branch v1.2.4 https://github.com/iam567/rich4-renew-app.git upstream
 echo "==> Applying source compatibility + synchronized start fixes"
 python3 rich4-h5/patch.py upstream
 echo "==> Installing original game dependencies"
