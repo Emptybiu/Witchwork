@@ -20,7 +20,7 @@ if [ "${RICH4_FETCH_ASSETS:-0}" = 1 ]; then
   curl --retry 4 --retry-delay 3 -fL -o /tmp/rich4-assets.tar https://github.com/iam567/rich4-renew-app/releases/download/assets/rich4-assets.tar
   curl --retry 4 --retry-delay 3 -fL -o /tmp/rich4-assets.tar.sha256 https://github.com/iam567/rich4-renew-app/releases/download/assets/rich4-assets.tar.sha256
   (cd /tmp && sha256sum -c rich4-assets.tar.sha256)
-  tar -xf /tmp/rich4-assets.tar -C upstream/game/public
+  tar --warning=no-unknown-keyword -xf /tmp/rich4-assets.tar -C upstream/game/public
   rm -f /tmp/rich4-assets.tar /tmp/rich4-assets.tar.sha256
   test -s upstream/game/public/assets/maps/maps.json || { echo "Asset layout unexpected"; exit 1; }
 fi
