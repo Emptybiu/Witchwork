@@ -136,6 +136,87 @@ const H5_RELAY_ONLY = /^wss:\\/\\/[^\\s]+$/.test(H5_RELAY);""", 'wss config')
   }
   // A new game starts with the first background track""", 'loading barrier')
     files['main.ts']=main
+    # The original gallery sizes itself to 92vh, which can exceed iOS Chrome's
+    # visible viewport with address + bottom navigation bars. Keep its header,
+    # page controls and Close button inside the smallest mobile viewport.
+    collection = base / 'collection.css'
+    css = collection.read_text(encoding='utf-8')
+    if 'RICH4 H5 MOBILE COLLECTION FIX v1' not in css:
+        css += """
+
+/* RICH4 H5 MOBILE COLLECTION FIX v1 (2026-11-19)
+   Keep the entire gallery including bottom buttons within browser chrome. */
+.col-overlay {
+  height: 100vh;
+  height: 100svh;
+  min-height: 0;
+  padding: max(30px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(25px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.col-overlay > .msg.sheet.col-sheet {
+  height: min(760px, 100%);
+  max-height: 100%;
+  min-height: 0;
+  width: min(860px, 100%);
+  max-width: 100%;
+  margin: 0;
+}
+.col-sheet > .col-grid {
+  flex: 1 1 0px;
+  min-height: 0;
+  overflow: hidden;
+}
+.col-sheet > .col-count,
+.col-sheet > .col-group,
+.col-sheet > .col-nav,
+.col-sheet > .choices {
+  flex-shrink: 0;
+}
+.col-sheet > .choices {
+  padding: 5px 0 7px;
+  margin: 0;
+}
+@media (max-width: 540px) {
+  .col-overlay {
+    padding-top: max(34px, env(safe-area-inset-top));
+    padding-bottom: max(26px, env(safe-area-inset-bottom));
+  }
+  .col-overlay > .msg.sheet.col-sheet {
+    padding: 20px 12px 12px;
+    gap: 6px;
+  }
+  .col-sheet > .ribbon { margin: -34px auto 5px; }
+  .col-sheet .col-group { gap: 8px; }
+  .col-sheet .col-group b { min-width: 0; flex: 1; }
+  .col-sheet .col-group button,
+  .col-sheet .col-nav button { min-width: 44px; min-height: 44px; }
+  .col-sheet > .choices .candy { min-height: 44px; }
+  .col-detail {
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: max(16px, env(safe-area-inset-top)) 14px max(22px, env(safe-area-inset-bottom));
+  }
+  .col-detail .col-big { flex: 0 0 auto; }
+  .col-detail .col-info { flex: 0 0 auto; }
+  .col-detail.brag { justify-content: center; }
+  .col-detail .col-poster img { max-height: min(70svh, 650px); }
+}
+@media (max-height: 590px) {
+  .col-overlay { padding-top: 23px; padding-bottom: 15px; }
+  .col-overlay > .msg.sheet.col-sheet { padding: 15px 10px 8px; gap: 3px; }
+  .col-sheet > .ribbon { margin-top: -25px; margin-bottom: 0; font-size: 16px; }
+  .col-sheet .col-count { margin: 0; font-size: 14px; }
+  .col-sheet .col-group button, .col-sheet .col-nav button { min-height: 34px; }
+  .col-sheet .col-group b { font-size: 14px; }
+  .col-sheet > .choices { padding: 2px 0 4px; }
+  .col-sheet > .choices .candy { padding: 6px 14px; }
+}
+"""
+        collection.write_text(css, encoding='utf-8')
     for name,src in files.items():
         (base/name).write_text(src,encoding='utf-8')
     print('Applied to original Rich4', os.getenv('RICH4_REF','v1.2.4'))
