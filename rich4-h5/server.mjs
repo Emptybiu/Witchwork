@@ -80,8 +80,12 @@ const http=createServer((req,res)=>{
   }
   if(req.method!=='GET' && req.method!=='HEAD')return sendText(res,405,'GET only');
   let path;
-  if(url.pathname.startsWith('/assets/'))path=cleanPath(ART,url.pathname.slice('/assets/'.length));
-  else path=cleanPath(ROOT,url.pathname==='/'?'index.html':url.pathname.slice(1));
+  if(url.pathname.startsWith('/assets/')) {
+    // Vite emits its own JS/CSS/fonts to dist/assets; original map resources
+    // also use /assets but live in public/assets. Built files take precedence.
+    const built=cleanPath(ROOT,url.pathname.slice(1));
+    path=built && existsSync(built) ? built : cleanPath(ART,url.pathname.slice('/assets/'.length));
+  } else path=cleanPath(ROOT,url.pathname==='/'?'index.html':url.pathname.slice(1));
   if(!path)return sendText(res,403,'Invalid path');
   serveFile(req,res,path);
 });
