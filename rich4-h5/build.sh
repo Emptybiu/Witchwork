@@ -25,3 +25,5 @@ if [ "${RICH4_FETCH_ASSETS:-0}" = 1 ]; then
   test -s upstream/game/public/assets/maps/maps.json || { echo "Asset layout unexpected"; exit 1; }
 fi
 echo "Original Rich4 web code built. Private assets installed? ${RICH4_FETCH_ASSETS:-0}"
+echo "==> Smoke testing private original-game HTTP + WSS relay"
+node rich4-h5/smoke.mjs
